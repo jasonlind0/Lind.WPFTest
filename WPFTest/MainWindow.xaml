@@ -1,0 +1,153 @@
+﻿<Window x:Class="WPFTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Lind.WPFTest.ViewModels;assembly=Lind.WPFTest.ViewModels"
+        xmlns:local="clr-namespace:Lind.WPFTest"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:prism="http://www.codeplex.com/prism"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:ProductsItem}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding ProductName}" Header="Name"/>
+                    <DataGridTextColumn Binding="{Binding Supplier.CompanyName}" Header="Supplier"/>
+                    <DataGridTextColumn Binding="{Binding Category.CategoryName}" Header="Category"/>
+                    <DataGridTextColumn Binding="{Binding QuantityPerUnit}" Header="Qty Per Unit"/>
+                    <DataGridTextColumn Binding="{Binding UnitPrice}" Header="Price"/>
+                    <DataGridTextColumn Binding="{Binding UnitsInStock}" Header="In Stock"/>
+                    <DataGridTextColumn Binding="{Binding UnitsOnOrder}" Header="On Order"/>
+                    <DataGridTextColumn Binding="{Binding ReorderLevel}" Header="Reorder Level"/>
+                    <DataGridCheckBoxColumn Binding="{Binding Discontinued}" Header="Discontinued"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:OrdersItem}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" x:Name="grdOrders">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding Customer.CompanyName}" Header="Customer"/>
+                    <DataGridTextColumn Binding="{Binding Employee.FullName}" Header="Employee"/>
+                    <DataGridTextColumn Binding="{Binding OrderDate, StringFormat=MM-dd-yyyy}" Header="Order Date"/>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Open">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Click">
+                                            <prism:InvokeCommandAction Command="{Binding DataContext.OpenOrder, ElementName=grdOrders}" CommandParameter="{Binding SelectedItem, ElementName=grdOrders}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EmployeesItem}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding LastName}" Header="Last Name"/>
+                    <DataGridTextColumn Binding="{Binding FirstName}" Header="First Name"/>
+                    <DataGridTextColumn Binding="{Binding Title}" Header="Title"/>
+                    <DataGridTextColumn Binding="{Binding Extension}" Header="Extension"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SuppliersItem}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding CompanyName}" Header="Company"/>
+                    <DataGridTextColumn Binding="{Binding ContactName}" Header="Contact"/>
+                    <DataGridTextColumn Binding="{Binding ContactTitle}" Header="Contact Title"/>
+                    <DataGridTextColumn Binding="{Binding Phone}" Header="Phone"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CustomersItem}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Binding="{Binding CompanyName}" Header="Company"/>
+                    <DataGridTextColumn Binding="{Binding ContactName}" Header="Contact"/>
+                    <DataGridTextColumn Binding="{Binding ContactTitle}" Header="Contact Title"/>
+                    <DataGridTextColumn Binding="{Binding Phone}" Header="Phone"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:OrderItem}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" FontWeight="Bold">Company</Label>
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Order.Customer.CompanyName}"/>
+                <Label Grid.Column="2" Grid.Row="0" FontWeight="Bold">Employee</Label>
+                <TextBlock Grid.Column="3" Grid.Row="0" Text="{Binding Order.Employee.FullName}"/>
+                <Label Grid.Column="0" Grid.Row="1" FontWeight="Bold">Order Date</Label>
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Order.OrderDate, StringFormat=MM-dd-yyyy}"/>
+                <DataGrid Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="2" ItemsSource="{Binding Items}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Product.ProductName}" Header="Product"/>
+                        <DataGridTextColumn Binding="{Binding UnitPrice}" Header="Price"/>
+                        <DataGridTextColumn Binding="{Binding Quantity}" Header="Quantity"/>
+                        <DataGridTextColumn Binding="{Binding Discount}" Header="Discount"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100px"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ComboBox ItemsSource="{Binding NavigationItems}" SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}" Grid.Row="0" Grid.Column="0">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                            <Setter Property="Background" Value="Yellow"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                                            <Setter Property="Background" Value="Green"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsUnloading}" Value="True">
+                                            <Setter Property="Background" Value="Gray"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsUnloaded}" Value="True">
+                                            <Setter Property="Background" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Button Command="{Binding Close}" Content="x">
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCloseable}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <ContentControl Content="{Binding SelectedNavigationItem}" Grid.Row="0" Grid.Column="1"/>
+    </Grid>
+</Window>
